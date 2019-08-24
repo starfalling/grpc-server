@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Hyperf\GrpcServer\Exception;
 
 
-use Hyperf\Server\Exception\RuntimeException;
+use Hyperf\Server\Exception\ServerException;
 
-class GrpcException extends RuntimeException
+class GrpcException extends ServerException
 {
 }
