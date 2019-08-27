@@ -15,8 +15,8 @@ namespace Hyperf\GrpcServer\Exception\Handler;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
+use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcServer\Exception\GrpcException;
-use Hyperf\GrpcServer\StatusCode;
 use Hyperf\Server\Exception\ServerException;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
@@ -57,17 +57,12 @@ class GrpcExceptionHandler extends ExceptionHandler
 
     /**
      * Transfer the non-standard response content to a standard response object.
-     *
-     * @param int|string $code
-     * @param string $message
-     * @param ResponseInterface $response
-     * @return ResponseInterface
      */
-    protected function transferToResponse($code, $message, ResponseInterface $response): ResponseInterface
+    protected function transferToResponse(int $code, string $message, ResponseInterface $response): ResponseInterface
     {
         $response = $response->withAddedHeader('Content-Type', 'application/grpc')
             ->withAddedHeader('trailer', 'grpc-status, grpc-message')
-            ->withStatus(StatusCode::HTTP_CODE_MAPPING[$code] ?: 500);
+            ->withStatus(StatusCode::HTTP_CODE_MAPPING[$code] ?? 500);
 
         $response->getSwooleResponse()->trailer('grpc-status', (string) $code);
         $response->getSwooleResponse()->trailer('grpc-message', (string) $message);
